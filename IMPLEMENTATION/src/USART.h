@@ -27,6 +27,7 @@ private:
 	char read_char();
 	void print_char(char byte);
 	void config_DMA();
+	void reset_DMA();
 public:
 	char receive_buffer[BUFFER_SIZE];
 public:
@@ -37,6 +38,7 @@ public:
 	void println(char *byte);
 	void read_string();
 	void flush_buffer();
+
 };
 
 } /* namespace custom_libraries */

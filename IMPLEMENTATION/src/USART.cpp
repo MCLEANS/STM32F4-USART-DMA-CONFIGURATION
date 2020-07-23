@@ -103,6 +103,9 @@ void USART::initialize(){
 	_USART->CR1 |= USART_CR1_RE;
 	_USART->CR1 |= USART_CR1_UE;
 	_USART->CR1 |= USART_CR1_RXNEIE;
+
+	//Configure DMA
+	config_DMA();
 }
 
 char USART::read_char(){
@@ -121,6 +124,7 @@ void USART::read_string(){
 void USART::flush_buffer(){
 	for(int i = 0; i < BUFFER_SIZE; i++) receive_buffer[i] = 0x00;
 	buffer_position = 0;
+	reset_DMA();
 }
 
 void USART::print_char(char byte){
@@ -135,6 +139,38 @@ void USART::print(char *byte){
 void USART::println(char *byte){
 	for(;*byte;byte++) print_char(*byte);
 	print_char('\n');
+}
+
+void USART::config_DMA(){
+	//Enable USART DMA receive
+	_USART->CR3 |= USART_CR3_DMAR;
+	//Enable DMA2 RCC for USART1
+	RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
+	//Select stream2 , channel4
+	DMA2_Stream2->CR |= (1<<27);
+	//set Memory data size to 8bits
+	DMA2_Stream2->CR &= ~DMA_SxCR_MSIZE;
+	//Set peripheral data size to 8bits
+	DMA2_Stream2->CR &= ~DMA_SxCR_PSIZE;
+	//set memory increment mode
+	DMA2_Stream2->CR |= DMA_SxCR_MINC;
+	//Enable DMA circular mode
+	DMA2_Stream2->CR |= DMA_SxCR_CIRC;
+	//Number of data Items to be transfered
+	DMA2_Stream2->NDTR = BUFFER_SIZE;
+	//Give peripheral address
+	DMA2_Stream2->PAR = (uint32_t)(&_USART->DR);
+	//Give memory address
+	DMA2_Stream2->M0AR = (uint32_t)receive_buffer;
+	//Enable the DMA
+	DMA2_Stream2->CR |= DMA_SxCR_EN;
+
+}
+
+void USART::reset_DMA(){
+	DMA2_Stream2->CR &= ~DMA_SxCR_EN;
+	DMA2_Stream2->CR |= DMA_SxCR_EN;
+
 }
 
 
