@@ -26,6 +26,7 @@ private:
 private:
 	char read_char();
 	void print_char(char byte);
+	void config_DMA();
 public:
 	char receive_buffer[BUFFER_SIZE];
 public:
