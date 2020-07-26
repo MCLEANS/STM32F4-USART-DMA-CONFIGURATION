@@ -3,6 +3,8 @@
  *
  *  Created on: Jul 20, 2020
  *      Author: MCLEANS
+ *
+ *      N/B: CURRENT LIBRARY ONLY SUPPORTS USART 1,2,3;
  */
 
 #ifndef USART_H_
@@ -15,10 +17,17 @@
 
 namespace custom_libraries {
 
+enum _DMA{
+	_DMA1,
+	_DMA2
+};
+
 class USART {
 private:
 	USART_TypeDef *_USART;
 	GPIO_TypeDef *GPIO;
+	_DMA ACTUAL_DMA;
+	DMA_Stream_TypeDef *DMA_STREAM;
 	uint8_t RX_PIN;
 	uint8_t TX_PIN;
 	int baudrate;
@@ -31,7 +40,13 @@ private:
 public:
 	char receive_buffer[BUFFER_SIZE];
 public:
-	USART(USART_TypeDef *_USART,GPIO_TypeDef *GPIO,uint8_t RX_PIN,uint8_t TX_PIN,int baudrate);
+	USART(USART_TypeDef *_USART,
+			GPIO_TypeDef *GPIO,
+			_DMA ACTUAL_DMA,
+			DMA_Stream_TypeDef *DMA_STREAM,
+			uint8_t RX_PIN,
+			uint8_t TX_PIN,
+			int baudrate);
 	~USART();
 	void initialize();
 	void print(char *byte);

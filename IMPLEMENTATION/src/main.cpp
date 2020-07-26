@@ -19,7 +19,7 @@
 #define BAUDRATE 9600
 
 custom_libraries::clock_config system_clock;
-custom_libraries::USART serial(USART1,GPIOA,SERIAL_RX,SERIAL_TX,BAUDRATE);
+custom_libraries::USART serial(USART1,GPIOA,custom_libraries::_DMA2,DMA2_Stream2,SERIAL_RX,SERIAL_TX,BAUDRATE);
 			
 
 int main(void)
